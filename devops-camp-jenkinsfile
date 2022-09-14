@@ -6,7 +6,7 @@ pipeline {
     environment {
         PIPELINE_HASH = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         HARBOR_REGISTRY = 'harbor.dev.afsmtddso.com'
-        HARBOR_PROJECT = '$HARBOR_ PROJECT/$IMAGE_NAME'
+        HARBOR_PROJECT = 'akindade-a-johnson-habor-project'
         APP_IMAGE_NAME = 'app'
         DB_IMAGE_NAME = 'db'
     }
@@ -24,10 +24,10 @@ pipeline {
             }
         }
         stage('Application docker build') {
-            steps {withCredentials([usernameColonPassword(credentialsId: 'Akindade.a.johnson-harbor-auth', variable: 'HARBOR-AUTH')]) {
+            steps {withCredentials([usernameColonPassword(credentialsId: 'ajohnson-harbor-auth', variable: 'HARBOR-AUTH')]) {
                     script {
                         sh 'docker build -t $DB_IMAGE_NAME-$COMMIT_HASH -f ./db/Dockerfile ./afs-labs-student'
-                        docker.withRegistry('https://$HARBOR_REGISTRY', 'Akindade.a.johnson-harbor-auth') {
+                        docker.withRegistry('https://$HARBOR_REGISTRY', 'ajohnson-harbor-auth') {
                             sh 'docker tag $DB_IMAGE_NAME-$COMMIT_HASH $HARBOR_REGISTRY/$HARBOR_PROJECT/$DB_IMAGE_NAME:$COMMIT_HASH-$PIPELINE_HASH'
                             sh 'docker push $HARBOR_REGISTRY/$HARBOR_PROJECT/$DB_IMAGE_NAME:$COMMIT_HASH-$PIPELINE_HASH'
                         }
@@ -39,13 +39,13 @@ pipeline {
             //TODO("Lab 4 - Artifact Management"): clean local docker app image
         }
         stage('Database docker build') {
-            steps {withCredentials([usernameColonPassword(credentialsId: 'akindade.a.johnson-harbor-auth', variable: 'HARBOR-AUTH')]) {
+            steps {withCredentials([usernameColonPassword(credentialsId: 'ajohnson-harbor-auth', variable: 'HARBOR-AUTH')]) {
               
         
 
                     script {
                         sh 'docker build -t $DB_IMAGE_NAME-$COMMIT_HASH -f ./db/Dockerfile ./afs-labs-student'
-                        docker.withRegistry('https://$HARBOR_REGISTRY', '<YOUR CREDENTIAL ID NAME>') {
+                        docker.withRegistry('https://$HARBOR_REGISTRY', 'ajohnson-harbor-auth') {
                             sh 'docker tag $DB_IMAGE_NAME-$COMMIT_HASH $HARBOR_REGISTRY/$HARBOR_PROJECT/$DB_IMAGE_NAME:$COMMIT_HASH-$PIPELINE_HASH'
                             sh 'docker push $HARBOR_REGISTRY/$HARBOR_PROJECT/$DB_IMAGE_NAME:$COMMIT_HASH-$PIPELINE_HASH'
                         }
