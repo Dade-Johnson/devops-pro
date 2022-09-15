@@ -12,11 +12,7 @@ pipeline {
     }
     stages {
         stage('Application repository') {
-            steps {dir('afs-labs-student') {
-                    script {
-                        env.COMMIT_HASH = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-                    }
-                }
+            steps {
                 echo "Cloning application repository"
                 //TODO("Lab 3 - Introduction to Automated Builds"): add github url
                 sh 'git clone https://github.com/Dade-Johnson/afs-labs-student.git'
@@ -29,7 +25,9 @@ pipeline {
             }
         }
         stage('Application docker build') {
-            steps {withCredentials([usernameColonPassword(credentialsId: 'ajohnson-harbor-auth', variable: 'HARBOR-AUTH')]) {
+            steps {
+                //TODO("Lab 4 - Artifact Management"): build the docker app image
+                withCredentials([usernameColonPassword(credentialsId: 'ajohnson-harbor-auth', variable: 'HARBOR-AUTH')]) {
                     script {
                         sh 'docker build -t $APP_IMAGE_NAME-$COMMIT_HASH -f ./app/Dockerfile ./afs-labs-student'
                         docker.withRegistry('https://$HARBOR_REGISTRY', 'ajohnson-harbor-auth') {
@@ -39,7 +37,6 @@ pipeline {
                     }
                 }
                 echo "Building application image"
-                //TODO("Lab 4 - Artifact Management"): build the docker app image
             }
             //TODO("Lab 4 - Artifact Management"): clean local docker app image
             post {
